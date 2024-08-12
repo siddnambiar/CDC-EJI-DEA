@@ -1,22 +1,35 @@
+/* General Body Styling */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f7f7f7;
     color: #343a40;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+/* Headings Styling */
 h1, h2, h3 {
     color: #007bff;
+    line-height: 1.3;
 }
 
+/* Container Styling */
 .container {
     background-color: #ffffff;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
 }
 
+.container:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Unordered List Styling */
 ul {
     list-style-type: none;
     padding: 0;
@@ -24,13 +37,27 @@ ul {
 
 ul li {
     padding: 8px 0;
+    transition: background-color 0.3s ease;
 }
 
+ul li:hover {
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+/* Sidebar Styling */
 .sidebar .sidebar-content {
-    background-color: #ffffff;
-    border-right: 1px solid #ccc;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
 }
 
+.stSidebar .stSelectbox, .stSidebar .stMultiselect {
+    border-color: #ccc;
+    margin-bottom: 15px;
+}
+
+/* Button Styling */
 .stButton>button {
     background-color: #007bff;
     color: white;
@@ -38,19 +65,23 @@ ul li {
     border-radius: 5px;
     padding: 10px 20px;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stButton>button:hover {
     background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+.stButton>button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+/* Selectbox and Multiselect Styling */
 .stSelectbox, .stMultiselect {
     background-color: #ffffff;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-
-.stSidebar .stSelectbox, .stSidebar .stMultiselect {
-    border-color: #ddd;
 }
