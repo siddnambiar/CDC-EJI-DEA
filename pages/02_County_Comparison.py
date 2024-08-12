@@ -6,6 +6,7 @@ from measure_groups import eji_percentile_measures  # Import the EJI percentile 
 st.set_page_config(page_title="County Comparison - CDC EJI Explorer", page_icon="📊", layout="wide")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # Sidebar for Navigation
 st.sidebar.header("📊 County Comparison")
 st.sidebar.write("Use this page to compare Environmental Justice Index (EJI) data across multiple counties and states.")
@@ -67,6 +68,9 @@ if selected_counties_states:
     total_population = filtered_data.groupby('County_State')['E_TOTPOP'].sum().reset_index()
     percentile_cols = list(eji_percentile_measures[measure_group].keys())
     percentile_means = filtered_data.groupby('County_State')[percentile_cols].mean().reset_index()
+
+    # Convert mean percentile values to percentages (0-100)
+    percentile_means[percentile_cols] = percentile_means[percentile_cols] * 100
     
     # Check for invalid data
     invalid_data = any(percentile_means[measure] < 0)

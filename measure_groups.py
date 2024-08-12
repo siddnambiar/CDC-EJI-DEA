@@ -2,7 +2,6 @@
 dea_measures = {
     "inputs": {
         "Environmental Burden": {
-            "EPL_OZONE": "Ozone Percentile (Higher values indicate more days above O3 standard)",
             "EPL_PM": "Particulate Matter Percentile (Higher values indicate more days above PM2.5 standard)",
             "EPL_DSLPM": "Diesel Particulate Matter Percentile (Higher values indicate higher concentrations)",
             "EPL_TOTCR": "Total Cancer Risk Percentile (Higher values indicate higher cancer risk)",
