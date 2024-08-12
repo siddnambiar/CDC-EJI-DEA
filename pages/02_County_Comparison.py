@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import matplotlib.pyplot as plt
+import numpy as np
 from measure_groups import eji_percentile_measures  # Import the EJI percentile measures
 
 st.set_page_config(page_title="County Comparison - CDC EJI Explorer", page_icon="📊", layout="wide")
@@ -60,7 +61,10 @@ measure = st.sidebar.selectbox(
 # Main content
 if selected_counties_states:
     st.markdown("## County Comparison Overview")
-    st.write("This page allows you to compare population distribution and selected EJI percentile measures across multiple counties and states. Use the visualizations below to analyze differences and similarities among the selected regions.")
+    st.write("""
+        This page allows you to compare population distribution and selected Environmental Justice Index (EJI) percentile measures across multiple counties and states. 
+        The EJI percentile measures are standardized scores that rank the relative standing of each area on specific environmental, social, and health vulnerability indicators.
+    """)
 
     filtered_data = data[data['County_State'].isin(selected_counties_states)]
     
@@ -77,39 +81,53 @@ if selected_counties_states:
 
     # Merge results for visualization
     result_data = pd.merge(total_population, percentile_means, on='County_State')
-    
+
     # Display pie chart for total population in a container with border
     with st.container(border=True):
         st.markdown("<h2 style='color: #007bff;'>Population Distribution</h2>", unsafe_allow_html=True)
         st.write("This pie chart illustrates the total population distribution across the selected counties. It helps you understand the relative population sizes of the regions you’re comparing.")
-        fig_pie = px.pie(
-            result_data, 
-            values='E_TOTPOP', 
-            names='County_State', 
-            title='',
-            color_discrete_sequence=px.colors.sequential.PuBu,
-            labels={'E_TOTPOP': 'Population'},
-            hover_data={'E_TOTPOP': True},
-            hole=0.3
+        
+        # Generate colors for the pie chart
+        cmap = plt.get_cmap('PuBu')
+        colors = cmap(np.linspace(0, 1, len(result_data)))
+
+        def autopct_format(pct, allvals):
+            absolute = int(np.round(pct/100.*np.sum(allvals)))
+            return f"{absolute:,} ({pct:.1f}%)"
+
+        fig, ax = plt.subplots()
+        wedges, texts, autotexts = ax.pie(
+            result_data['E_TOTPOP'], labels=result_data['County_State'], autopct=lambda pct: autopct_format(pct, result_data['E_TOTPOP']),
+            startangle=90, colors=colors
         )
-        fig_pie.update_traces(textinfo='percent+label')
-        st.plotly_chart(fig_pie, use_container_width=True)
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.setp(autotexts, size=10, weight="bold")
+        st.pyplot(fig)
 
     # Display horizontal bar chart for selected measure in a container with border
     if not invalid_data:
         with st.container(border=True):
             st.markdown("<h2 style='color: #007bff;'>Percentile Measure Comparison</h2>", unsafe_allow_html=True)
-            st.write(f"This bar chart compares the selected measure, **{eji_percentile_measures[measure_group][measure]['description']}**, across the selected counties.")
-            st.write(f"**Context:** {eji_percentile_measures[measure_group][measure]['context']}. Higher values are generally considered **{eji_percentile_measures[measure_group][measure]['higher_is']}**.")
-            fig_bar = px.bar(
-                result_data.sort_values(by=measure, ascending=False), 
-                x=measure, 
-                y='County_State', 
-                orientation='h',
-                labels={'County_State': 'County, State', measure: eji_percentile_measures[measure_group][measure]['description']},
-                color_discrete_sequence=px.colors.sequential.Teal
-            )
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.write(f"""
+                This bar chart compares the selected measure, **{eji_percentile_measures[measure_group][measure]['description']}**, across the selected counties.
+                Percentile scores range from 0 to 100 and represent the relative standing of each county on this measure:
+            """)
+            st.write(f"""
+                - **High percentile values** (closer to 100%) often indicate greater exposure to environmental burdens, higher social vulnerability, or greater health risks, depending on the context of the measure.
+                - **Low percentile values** (closer to 0%) often indicate lesser exposure to environmental burdens, lower social vulnerability, or fewer health risks.
+            """)
+            st.write(f"""
+                For the selected measure, **{eji_percentile_measures[measure_group][measure]['description']}**, higher values are generally considered **{eji_percentile_measures[measure_group][measure]['higher_is']}**. 
+                { 'Higher values may indicate increased risk or burden, which is concerning for communities.' if eji_percentile_measures[measure_group][measure]['higher_is'] == 'bad' else 'Higher values may indicate better conditions or resilience, which is beneficial for communities.'}
+            """)
+
+            fig, ax = plt.subplots()
+            result_data = result_data.sort_values(by=measure, ascending=False)
+            ax.barh(result_data['County_State'], result_data[measure], color='teal')
+            ax.set_xlabel(f'{eji_percentile_measures[measure_group][measure]["description"]} (%)')
+            ax.set_ylabel('County, State')
+            ax.invert_yaxis()  # Invert y-axis to have the highest values at the top
+            st.pyplot(fig)
     else:
         with st.container(border=True):
             st.markdown("<h2 style='color: #007bff;'>Percentile Measure Comparison</h2>", unsafe_allow_html=True)

@@ -29,11 +29,6 @@ dea_measures = {
 # EJI Percentile Measures for Risk Scorecard
 eji_percentile_measures = {
     "Environmental Burden": {
-        "EPL_OZONE": {
-            "description": "Ozone Percentile",
-            "context": "Higher values indicate more days above O3 standard",
-            "higher_is": "bad"
-        },
         "EPL_PM": {
             "description": "Particulate Matter Percentile",
             "context": "Higher values indicate more days above PM2.5 standard",

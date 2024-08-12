@@ -28,16 +28,16 @@ selected_county_state = st.sidebar.selectbox(
 # Function to determine color based on value and context
 def get_color(value, higher_is):
     if higher_is == "bad":
-        if value > 80:
+        if value > 70:
             return "red"
-        elif value > 40:
+        elif value > 30:
             return "blue"
         else:
             return "green"
     elif higher_is == "good":
-        if value > 80:
+        if value > 70:
             return "green"
-        elif value > 40:
+        elif value > 30:
             return "blue"
         else:
             return "red"
